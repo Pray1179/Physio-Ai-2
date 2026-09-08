@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper: is this request from a doctor account? ---
+    function isDoctor() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor';
+    }
+
+    // --- users/{uid} -------------------------------------------------
+    // The email-lookup a doctor runs needs read access to the users
+    // collection. Doctors may list/search users by email; a user may
+    // always read and edit their own profile.
+    match /users/{uid} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == uid || isDoctor());
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    // --- careAssignments/{patientUid} --------------------------------
+    // Created by a doctor to link a patient. Readable by the patient
+    // themselves and by every doctor in doctorUids.
+    match /careAssignments/{patientUid} {
+      allow read: if request.auth != null &&
+        (resource.data.patientUid == request.auth.uid ||
+         request.auth.uid in resource.data.doctorUids);
+      allow create: if isDoctor();
+      allow update: if isDoctor();
+      allow delete: if false;
+    }
+
+    // --- sessions/{sessionId} ----------------------------------------
+    // A patient creates their own workout sessions; the record is
+    // readable by the patient and any assigned doctor.
+    match /sessions/{sessionId} {
+      allow read: if request.auth != null &&
+        (resource.data.patientUid == request.auth.uid ||
+         get(/databases/$(database)/documents/careAssignments/$(resource.data.patientUid)).data.doctorUids
+           .hasAny([request.auth.uid]));
+      allow create: if request.auth != null &&
+        request.resource.data.patientUid == request.auth.uid;
+      allow update: if request.auth != null &&
+        request.resource.data.patientUid == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // --- therapyPlans/{planId} ---------------------------------------
+    // Written by a doctor, readable by the patient it belongs to and
+    // by any doctor assigned to that patient.
+    match /therapyPlans/{planId} {
+      allow read: if request.auth != null &&
+        (resource.data.patientUid == request.auth.uid ||
+         isDoctor());
+      allow create: if isDoctor();
+      allow update: if isDoctor();
+      allow delete: if false;
+    }
+  }
+}

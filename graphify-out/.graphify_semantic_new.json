@@ -1,0 +1,156 @@
+{
+  "nodes": [
+    {
+      "id": "index",
+      "label": "index.html Entry Point",
+      "file_type": "document",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_physioai",
+      "label": "PhysioAI Platform",
+      "file_type": "concept",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_dark_theme",
+      "label": "Dark Theme Bootstrapping",
+      "file_type": "rationale",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_root",
+      "label": "Root Mount Node",
+      "file_type": "code",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_favicon",
+      "label": "Favicon Asset",
+      "file_type": "image",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_main_tsx",
+      "label": "main.tsx Application Bootstrap",
+      "file_type": "code",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_favicon_svg",
+      "label": "Favicon SVG Icon",
+      "file_type": "image",
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/public/favicon.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "index",
+      "target": "src_main_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "index",
+      "target": "index_root",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "index",
+      "target": "index_favicon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "src_main_tsx",
+      "target": "index_root",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "index",
+      "target": "index_physioai",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "index",
+      "target": "index_dark_theme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "index_dark_theme",
+      "target": "index_physioai",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

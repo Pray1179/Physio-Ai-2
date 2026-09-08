@@ -1,0 +1,1 @@
+const t="physio.pendingResult";function s(e){try{sessionStorage.setItem(t,JSON.stringify(e))}catch{}}function n(){try{const e=sessionStorage.getItem(t);return e?(sessionStorage.removeItem(t),JSON.parse(e)):null}catch{return null}}function r(){try{sessionStorage.removeItem(t)}catch{}}export{r as c,s as p,n as r};

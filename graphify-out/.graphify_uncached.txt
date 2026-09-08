@@ -1,0 +1,2 @@
+/Users/praty/HackClaude/PhysioAi-2.0/physio-web/index.html
+/Users/praty/HackClaude/PhysioAi-2.0/physio-web/public/favicon.svg

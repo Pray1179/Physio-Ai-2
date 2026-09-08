@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Patient uploads their own recording; assigned doctors can read.
+    match /recordings/{patientUid}/{allPaths=**} {
+      allow read: if request.auth != null && (
+        // The patient owns this folder
+        request.auth.uid == patientUid ||
+        // The requesting doctor is assigned to this patient
+        firestore.get(/databases/(default)/documents/careAssignments/$(patientUid)).data.doctorUids.hasAny([request.auth.uid])
+      );
+      allow write: if request.auth != null && request.auth.uid == patientUid;
+    }
+  }
+}
