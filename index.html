@@ -5,6 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhysioAi 2.0</title>
+    <script>
+      // GitHub Pages SPA deep-link support. 404.html rewrites a direct hit on
+      // a client-side route to /?path=<route>; restore the route here so React
+      // Router sees the real path instead of "/".
+      ;(function () {
+        var params = new URLSearchParams(window.location.search)
+        var path = params.get("path")
+        if (path) {
+          // Base path of the deployed site (matches vite.config.ts `base`).
+          history.replaceState(null, "", window.location.origin + "/Physio-Ai-2/" + path)
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
