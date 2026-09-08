@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PageSkeleton } from "@/components/PageSkeleton"
+import { ErrorState } from "@/components/ErrorState"
 import { EmptyState } from "@/components/EmptyState"
 import { SessionChart } from "@/components/SessionChart"
 import { cn } from "@/lib/utils"
@@ -35,17 +36,33 @@ export function SessionHistoryPage() {
   const navigate = useNavigate()
   const [sessions, setSessions] = useState<SessionRecord[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [refetchKey, setRefetchKey] = useState(0)
   const [filter, setFilter] = useState<string>("all")
 
   useEffect(() => {
     if (!user) return
+    let active = true
     listSessions(user.uid).then((s) => {
+      if (!active) return
       setSessions(s)
       setLoading(false)
+    }).catch((err) => {
+      if (!active) return
+      console.error("[SessionHistoryPage]", err)
+      setError("Failed to load session history. Check your connection and try again.")
+      setLoading(false)
     })
-  }, [user])
+    return () => { active = false }
+  }, [user, refetchKey])
 
   if (loading) return <PageSkeleton />
+  if (error) return (
+    <ErrorState
+      message={error}
+      onRetry={() => { setError(null); setLoading(true); setRefetchKey((k) => k + 1) }}
+    />
+  )
 
   const filtered =
     filter === "all"

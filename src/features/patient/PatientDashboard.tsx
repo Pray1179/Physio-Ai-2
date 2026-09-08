@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PageSkeleton } from "@/components/PageSkeleton"
+import { ErrorState } from "@/components/ErrorState"
 import { SessionSummaryChart } from "@/components/SessionChart"
 import { SessionStatusBadge } from "@/features/patient/SessionHistoryPage"
 
@@ -33,6 +34,8 @@ export function PatientDashboard() {
   const [sessions, setSessions] = useState<SessionRecord[]>([])
   const [plan, setPlan] = useState<TherapyPlan | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [refetchKey, setRefetchKey] = useState(0)
 
   useEffect(() => {
     if (!user) return
@@ -44,13 +47,24 @@ export function PatientDashboard() {
         setPlan(p)
         setLoading(false)
       }
-    )
+    ).catch((err) => {
+      if (!active) return
+      console.error("[PatientDashboard]", err)
+      setError("Failed to load your dashboard. Check your connection and try again.")
+      setLoading(false)
+    })
     return () => {
       active = false
     }
-  }, [user])
+  }, [user, refetchKey])
 
   if (loading) return <PageSkeleton />
+  if (error) return (
+    <ErrorState
+      message={error}
+      onRetry={() => { setError(null); setLoading(true); setRefetchKey((k) => k + 1) }}
+    />
+  )
 
   const recentSessions = sessions.slice(0, 10)
   const lastSession = sessions[0]

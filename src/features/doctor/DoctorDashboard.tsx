@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PageSkeleton } from "@/components/PageSkeleton"
+import { ErrorState } from "@/components/ErrorState"
 
 /** Days since the last session; null when a patient has never worked out. */
 function daysSinceLast(session: SessionRecord | null): number | null {
@@ -55,6 +56,8 @@ export function DoctorDashboard() {
   const [rows, setRows] = useState<PatientRow[]>([])
   const [connectable, setConnectable] = useState<PatientProfile[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [refetchKey, setRefetchKey] = useState(0)
   const [emailQuery, setEmailQuery] = useState("")
   const [searchResult, setSearchResult] = useState<PatientProfile | null>(null)
   const [searching, setSearching] = useState(false)
@@ -63,29 +66,43 @@ export function DoctorDashboard() {
   const load = useCallback(async () => {
     if (!user) return
     setLoading(true)
-    const uids = await assignedPatientUids(user.uid)
-    const profiles = (
-      await Promise.all(uids.map((uid) => fetchUserProfile(uid)))
-    ).filter((p): p is PatientProfile => p !== null)
+    try {
+      const uids = await assignedPatientUids(user.uid)
+      const profiles = (
+        await Promise.all(uids.map((uid) => fetchUserProfile(uid)))
+      ).filter((p): p is PatientProfile => p !== null)
 
-    const loaded = await Promise.all(
-      profiles.map(async (profile) => {
-        const sessions = await listSessions(profile.uid)
-        return {
-          profile,
-          sessions,
-          daysSince: daysSinceLast(sessions[0] ?? null),
-        }
-      })
-    )
-    setRows(loaded)
-    setConnectable(await listConnectablePatients())
-    setLoading(false)
-  }, [user])
+      const loaded = await Promise.all(
+        profiles.map(async (profile) => {
+          const sessions = await listSessions(profile.uid)
+          return {
+            profile,
+            sessions,
+            daysSince: daysSinceLast(sessions[0] ?? null),
+          }
+        })
+      )
+      setRows(loaded)
+      setConnectable(await listConnectablePatients())
+      setLoading(false)
+    } catch (err) {
+      console.error("[DoctorDashboard]", err)
+      setError("Failed to load patient data. Check your connection and try again.")
+      setLoading(false)
+    }
+  }, [user, refetchKey])
 
   useEffect(() => {
     load()
   }, [load])
+
+  if (loading) return <PageSkeleton />
+  if (error) return (
+    <ErrorState
+      message={error}
+      onRetry={() => { setError(null); setLoading(true); setRefetchKey((k) => k + 1) }}
+    />
+  )
 
   const connect = async (profile: PatientProfile) => {
     if (!user) return
@@ -133,8 +150,6 @@ export function DoctorDashboard() {
       setSearching(false)
     }
   }
-
-  if (loading) return <PageSkeleton />
 
   const anyInactive = rows.some((r) => r.daysSince !== null && r.daysSince > INACTIVE_DAYS)
 

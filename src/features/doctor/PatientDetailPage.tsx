@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PageSkeleton } from "@/components/PageSkeleton"
+import { ErrorState } from "@/components/ErrorState"
 import { SessionStatusBadge } from "@/features/patient/SessionHistoryPage"
 import { PrescriptionForm } from "@/features/doctor/PrescriptionForm"
 
@@ -92,6 +93,7 @@ export function PatientDetailPage() {
   const [sessions, setSessions] = useState<SessionRecord[]>([])
   const [plan, setPlan] = useState<TherapyPlan | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [refetchKey, setRefetchKey] = useState(0)
   const [discharging, setDischarging] = useState(false)
 
@@ -108,6 +110,11 @@ export function PatientDetailPage() {
       setSessions(s)
       setPlan(pl)
       setLoading(false)
+    }).catch((err) => {
+      if (!active) return
+      console.error("[PatientDetailPage]", err)
+      setError("Failed to load patient data. Check your connection and try again.")
+      setLoading(false)
     })
     return () => {
       active = false
@@ -115,6 +122,12 @@ export function PatientDetailPage() {
   }, [patientUid, refetchKey])
 
   if (loading) return <PageSkeleton />
+  if (error) return (
+    <ErrorState
+      message={error}
+      onRetry={() => { setError(null); setLoading(true); setRefetchKey((k) => k + 1) }}
+    />
+  )
 
   if (!profile) {
     return (
