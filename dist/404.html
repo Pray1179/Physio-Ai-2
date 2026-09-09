@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PhysioAi 2.0</title>
+    <script>
+      // GitHub Pages has no server-side rewrites for a SPA, so a deep link
+      // (e.g. /Physio-Ai-2/patient) returns 404. Rewrite to the query param
+      // and let index.html restore the path via history.replaceState.
+      ;(function () {
+        var segments = window.location.pathname.split("/")
+        var base = segments.slice(0, 2).join("/") // e.g. /Physio-Ai-2
+        var rest = segments.slice(2).join("/")
+        if (rest) {
+          window.location.replace(base + "/?path=" + encodeURIComponent(rest))
+        }
+      })()
+    </script>
+  </head>
+  <body></body>
+</html>
